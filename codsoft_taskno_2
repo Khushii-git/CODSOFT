@@ -1,0 +1,80 @@
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+
+
+public class word{
+
+    public static String readText() throws IOException {
+        BufferedReader br = new BufferedReader(new java.io.InputStreamReader(System.in));
+        System.out.println("Enter 'text' or 'file': ");
+        String source = br.readLine().trim().toLowerCase();
+        
+        if (source.equals("text")) {
+            System.out.println("Enter the text:");
+            String input = br.readLine();
+            if (input.isEmpty()) {
+                System.out.println("Error: Text cannot be empty.");
+                return readText(); 
+            }
+            return input;
+        } else if (source.equals("file")) {
+            System.out.println("Enter the filename:");
+            String filename = br.readLine();
+            try {
+                return readFile(filename);
+            } catch (IOException e) {
+                System.out.println("Error reading file: " + e.getMessage());
+                return readText(); 
+            }
+        } else {
+            System.out.println("Invalid input.");
+            return readText(); 
+        }
+    }
+
+    public static String readFile(String filename) throws IOException {
+        StringBuilder text = new StringBuilder();
+        try (BufferedReader Reader = new BufferedReader(new FileReader(filename))) {
+            String line;
+            while ((line = Reader.readLine()) != null) {
+                text.append(line).append("\n");
+            }
+        } catch (IOException e) {
+            throw new IOException("Error reading file: " + e.getMessage());
+        }
+        return text.toString();
+    }
+
+    public static int countWords(String text) {
+        int wordCount = 0;
+        boolean inWord = false;
+
+        for (char c : text.toCharArray()) {
+            if (Character.isLetter(c)) {
+                if (!inWord) {
+                    inWord = true;
+                    wordCount++;
+                }
+            } else {
+                inWord = false;
+            }
+        }
+        return wordCount;
+    }
+   
+
+    public static void main(String[] args) {
+        try {
+            String text = readText();
+            if (!text.isEmpty()) {
+                int wordCount = countWords(text);
+                System.out.println("Total words: " + wordCount);
+                
+            }
+        } catch (IOException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+}
